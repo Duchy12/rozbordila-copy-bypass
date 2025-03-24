@@ -30,6 +30,26 @@
 
     // Enable text selection
     var style = document.createElement('style');
-    style.innerHTML = '* { user-select: auto !important; pointer-events: auto !important; }';
+    style.innerHTML = '* { user-select: auto !important; pointer-events: auto !important; cursor: auto !important }';
     document.head.appendChild(style);
+
+    // MutationObserver, needed since they added the DRM to the page's html itself
+    function observeAndDisableScript(scriptId) {
+        const observer = new MutationObserver(() => {
+            const script = document.getElementById(scriptId);
+            if (script) {
+                script.type = "text/plain";
+                console.warn(`Script with id "${scriptId}" has been disabled.`);
+                observer.disconnect();
+            }
+        });
+
+        observer.observe(document.documentElement, { childList: true, subtree: true });
+    }
+
+    observeAndDisableScript("wpcp_disable_selection");
+    observeAndDisableScript("wpcp_disable_Right_Click");
+
+
 })();
+
